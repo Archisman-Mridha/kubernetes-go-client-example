@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
@@ -18,7 +17,7 @@ var (
 )
 
 func main( ) {
-	var kubeconfigFileLocation string = os.Getenv("HOME") + "/.kube/config"
+	var kubeconfigFileLocation string = "C:/Users/archi/.kube/config"
 
 	kubeConfig, error := clientcmd.BuildConfigFromFlags("", kubeconfigFileLocation)
 	panicFilter(error)
@@ -35,7 +34,7 @@ func main( ) {
 		ObjectMeta: metaV1.ObjectMeta {
 
 			Name: "demo-deployment",
-			Namespace: "microservices",
+			Namespace: coreV1.NamespaceDefault,
 		},
 
 		Spec: appsV1.DeploymentSpec {
@@ -76,7 +75,7 @@ func main( ) {
 	}
 
 	// create the deployment
-	createdDeployment, error := appsV1APIClient.Deployments("microservices").Create(context.Background( ), deploymentDefinition, metaV1.CreateOptions{ })
+	createdDeployment, error := appsV1APIClient.Deployments(coreV1.NamespaceDefault).Create(context.Background( ), deploymentDefinition, metaV1.CreateOptions{ })
 	panicFilter(error)
 
 	log.Printf("created deployment %s \n", createdDeployment.ObjectMeta.Name)
